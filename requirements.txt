@@ -1,3 +1,6 @@
+# Root requirements for Vercel and local deployments.
+# Keep this in sync with api/requirements.txt so Python serverless
+# installs the packages used by api/orchestrator.py and api/spotify.py.
 Flask>=3.0.0,<4.0.0
 Werkzeug>=3.0.0,<4.0.0
 Jinja2>=3.1.0,<4.0.0
