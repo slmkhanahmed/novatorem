@@ -180,6 +180,19 @@ def get_audio_features(track_id: str) -> Optional[AudioFeatures]:
         return None
 
 
+def _can_fallback_to_recent_tracks(error: APIError) -> bool:
+    """
+    Detect Spotify player API failures where recently played can still work.
+
+    Spotify's currently-playing endpoint can return HTTP 403 when the account
+    tied to the app is not eligible for player-state access. In that case we
+    still want to render the widget using recently played tracks instead of
+    surfacing an error card to GitHub.
+    """
+    message = error.message.lower()
+    return "http 403" in message and "premium subscription required" in message
+
+
 def _extract_track_info(item: dict[str, Any], is_playing: bool) -> TrackInfo:
     """Extract normalized track information from a Spotify item."""
     album_art_url = ""
@@ -220,6 +233,9 @@ def get_now_playing() -> dict[str, Any]:
             item = data["item"]
     except NoTracksError:
         pass
+    except APIError as e:
+        if not _can_fallback_to_recent_tracks(e):
+            raise
 
     if item is None:
         data = _api_get(f"{spotify_config.recently_played_url}?limit=10")
