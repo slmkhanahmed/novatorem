@@ -2,7 +2,6 @@
     "current-theme": "light",
     "templates": {
         "light": "spotify.html.j2",
-        "dark": "spotify-dark.html.j2",
-        "base": "base.html.j2"
+        "dark": "spotify-dark.html.j2"
     }
 }
